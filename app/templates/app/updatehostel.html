@@ -1,0 +1,39 @@
+{% extends 'app/dashboard.html' %}
+{% block content %}
+
+<form method = "post" action={% url 'updatehosteldata' %} style="border:1px solid #ccc">
+  {% csrf_token %}
+    <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
+      <h1 class="w3-text-teal">UPDATE HOSTEL</h1>
+      <p class="w3-text-teal">Please provide details that you want to update</p>
+      <hr>
+      <label for="name" class="w3-text-teal"><b>Hostel Name</b></label>
+      <input type="text" value={{hostel.h_name}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel Name" name="name" required>
+
+      <label for="email" class="w3-text-teal"><b>Hostel Email</b></label>
+      <input type="text" value={{hostel.h_email}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel Email" name="email" required>
+      
+      <label for="contact" class="w3-text-teal"><b>Hostel Contact</b></label>
+      <input type="text" value={{hostel.h_contact}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel contact" name="contact" required>
+
+      <label for="city" class="w3-text-teal"><b>Hostel City</b></label>
+      <input type="text" value={{hostel.h_city}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel city" name="city" required>
+  
+      <label for="address" class="w3-text-teal"><b>Hostel Address</b></label>
+      <input type="text" value={{hostel.h_address}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel Address" name="address" required>
+  
+      <label for="fees" class="w3-text-teal"><b>Hostel Fees</b></label>
+      <input type="text" value={{hostel.h_fees}} class="w3-input w3-margin-bottom" placeholder="Enter Hostel fees" name="fees" required>
+  
+      <p class="w3-text-teal">By creating an account you agree to our<a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+  
+      <div class="w3-container">
+          <button type="submit" name="save" value='save' class="w3-button w3-teal w3-round">Save</button>
+        <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+      </div>
+    </div>
+  </form>
+    
+
+
+{% endblock %}

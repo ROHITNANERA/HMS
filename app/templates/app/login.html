@@ -1,0 +1,27 @@
+{% extends 'app/main.html' %}
+{% block content %}
+
+<form action="" method="POST">
+{% csrf_token %}
+ <div class="w3-container w3-quarter w3-margin-left w3-margin-bottom">
+    <h2 class="w3-text-teal">Login</h2>
+    <label for="email" class="w3-text-teal"><b>Email ID</b></label>
+    <input type="text"class = "w3-input w3-margin-bottom" placeholder="Enter Email ID" name="email" required>
+
+    <label for="psw" class="w3-text-teal "><b>Password</b></label>
+    <input type="password" class="w3-input w3-margin-bottom" placeholder="Enter Password" name="psw" required>
+    <button type="submit"class="w3-button w3-teal w3-round">Login</button>
+    <button class = "w3-margin-left w3-button w3-teal w3-round" type="button">Cancel</button>
+<br>
+    <label>
+        <input type="checkbox" class="w3-text-teal" checked="checked" name="remember"> Remember me
+    </label>
+      <span class="w3-text-teal w3-margin-left "> <a href="#">Forgot password?</a></span>
+  </div>
+  {% comment %} <table>
+        {{ form.as_table }}
+  </table>
+  <input type="submit" value="Submit"> {% endcomment %}
+</form>
+
+{% endblock %}

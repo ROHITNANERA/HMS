@@ -1,0 +1,37 @@
+{% extends 'app/dashboard.html' %}
+{% block content %}
+
+<form method = "post" action={% url 'saveroom' %} style="border:1px solid #ccc">
+  {% csrf_token %}
+    <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
+      <h1 class="w3-text-teal">ADD ROOM</h1>
+      <p class="w3-text-teal">Please add room to your hostel</p>
+      <hr>
+      <label for="Hostel" class="w3-text-teal"><b>Select Hostel</b></label>
+      <select name="hostel" class="w3-dropdown-click w3-padding w3-bar w3-margin-bottom">
+          {% for h in hostels %}
+        <option class = "w3-bar-item w3-button" value={{h.id}}>{{h.h_name}}</option>
+        {% endfor %}
+      </select>
+      <br>
+      <label for="roomno" class="w3-text-teal"><b>Room No</b></label>
+      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Room No" name="roomno" required>
+
+      
+
+
+      <label for="capacity" class="w3-text-teal"><b>Room Capacity</b></label>
+      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Room Capacity" name="capacity" required>
+
+      <p class="w3-text-teal">By creating an account you agree to our<a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+  
+      <div class="clearfix">
+          <button type="submit" class="w3-button w3-teal w3-round">Add</button>
+        <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+      </div>
+    </div>
+  </form>
+    
+
+  </form>
+{% endblock %}
