@@ -1,6 +1,5 @@
 from asyncio.windows_events import NULL
 from django.shortcuts import redirect, render
-from requests import session
 from .forms import *
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
@@ -11,7 +10,7 @@ from django.db.models import Q
 
 def index(request):
     # return HttpResponse("<h1>Hello, world. You're at the  index.</h1>")
-    return render (request,"app/index.html")
+    return render (request,"app/login.html")
 
 def home(request):
    return render(request, 'app/home.html', {})
@@ -44,14 +43,18 @@ def login(request):
     #return context in place of '{}' if umcomment this
     try:
         if request.session['login']:
+            print("login try-if block")
             return render(request,'app/selecthostel.html',{})
     except KeyError:
 
         if request.POST:
+            print("Login except-if block")
             print(request.POST)
             try:
                 hadmin = HAdmin.objects.get(email = request.POST['email'])
+                print("login except-try block")
                 if hadmin.Password == request.POST['psw']:
+                    print("login except try if block")
                     request.session['login']=hadmin.id
                     request.session['islogin'] = True
                     print(request.session['login'])
@@ -172,7 +175,7 @@ def addroom(request):
         return render(request,'app/addroom.html',{ 'hostels':hostelsobj })
     except Exception as e:
             print(e)
-            return redirect(reverse('addroom'))
+            return redirect(reverse('login'))
 
 def saveroom(request):
     
@@ -257,7 +260,9 @@ def selectforall(request):
     
     try:
         if not request.session['login']:
+            print("selectfor all if me gaya")
             return redirect(reverse('login'))
+        print("selectfor all i se bahar hu")
         hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
         request.session['selectedhostel'] = request.POST['hostel']
         print("Hostel selected...")
@@ -268,6 +273,7 @@ def selectforall(request):
             print(e)    
             # return redirect(reverse('selectforall'))
             return render(request,'app/selecthostel.html',{ 'hostels':hostelsobj })
+            # return redirect(reverse('login'))
 
 
 def addfacility_form(request):
@@ -324,9 +330,13 @@ def viewstudents(request):
 
 
 def addstudent(request):
-    
-    rooms = Room.objects.filter(hostel=request.session['selectedhostel'])         
-    return render(request,'app/addstudent.html',{'rooms':rooms})
+    try:
+        if not request.session['login']:
+            return redirect(reverse('login'))
+        rooms = Room.objects.filter(hostel=request.session['selectedhostel'])       
+        return render(request,'app/addstudent.html',{'rooms':rooms})
+    except KeyError:
+        return redirect(reverse('login'))
         # return redirect(reverse('addhostel'))
     
 
