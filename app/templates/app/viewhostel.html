@@ -1,0 +1,32 @@
+{% extends 'app/dashboard.html' %}
+{% block content %}
+{% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
+<form method = "post" action={% url 'updatehostel' %} style="border:1px solid #ccc">
+    {% csrf_token %}
+{% for h in hostels %}
+
+<div class="w3-container w3-text-teal w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
+    <table class="w3-table w3-bordered">
+<tr>
+    <td>Name</td><td> {{ h.h_name }}</td></tr>
+<tr>
+<td>Email</td><td>{{h.h_email}}</td></tr>   
+<tr>
+<td>contact</td><td>{{h.h_contact}}</td></tr>
+<tr>
+<td>City</td><td>{{h.h_city}}</td></tr>
+<tr>
+<td>Address &nbsp;&nbsp;</td><td>{{h.h_address}}</td></tr>
+<tr>
+<td>Fees</td><td>{{h.h_fees}}</td></tr>
+<input type="hidden" name="hostelid" value={{h.id}}>
+<tr><td><button type="submit" name="action" class="w3-button w3-round w3-teal" value="update">Update</button></td>
+<td><button type="submit" name="action" class="w3-button w3-round w3-red" value="delete">Delete</button></td></tr>
+</table>
+
+</div>
+
+ {% endfor %}
+</form>
+
+{% endblock %}

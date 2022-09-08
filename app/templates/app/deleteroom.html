@@ -1,0 +1,27 @@
+{% extends 'app/dashboard.html' %}
+{% block content %}
+{% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
+<form method = "post" action={% url 'deleteroom' %} style="border:1px solid #ccc">
+    {% csrf_token %}
+{% for h in rooms %}
+
+<div class="w3-container w3-text-teal w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
+    <table class="w3-table w3-bordered">
+<tr>
+    <td>Room No</td><td> {{ h.room_no }}</td></tr>
+<tr>
+<td>Hostel</td><td>{{h.hostel}}</td></tr>   
+<tr>
+<td>Capacity</td><td>{{h.capacity}}</td></tr>
+
+<input type="hidden" name="roomid" value={{h.id}}>
+<tr>
+<td><button type="submit" name="action" class="w3-button w3-round w3-red" value="delete">Delete</button></td></tr>
+</table>
+
+</div>
+
+ {% endfor %}
+</form>
+
+{% endblock %}
