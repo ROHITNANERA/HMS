@@ -4,32 +4,23 @@
 <form method = "post" action="" style="border:1px solid #ccc">
   {% csrf_token %}
     <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
-      <h1 class="w3-text-teal">ADD HOSTEL</h1>
-      <p class="w3-text-teal">Please provide hostel details</p>
+      <h1 class="">Add Hostel</h1>
+      {% for message in messages %}
+        <p id="messages" class="w3-bar w3-padding w3-blue-gray">{{message}}</p>    
+      {% endfor %}
       <hr>
-      <label for="email" class="w3-text-teal"><b>Hostel Name</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel Name" name="name" required>
+      {{form.h_name}}</br>
+      {{form.h_email}}</br>
+      {{form.h_contact}}</br>
+      {{form.h_city}}</br>
+      {{form.h_address}}</br>
+      {{form.h_fees}}</br>
+      <div class="w3-text-red">{{form.errors}}</div>
 
-      <label for="email" class="w3-text-teal"><b>Hostel Email</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel Email" name="email" required>
-      
-      <label for="contact" class="w3-text-teal"><b>Hostel Contact</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel contact" name="contact" required>
-
-      <label for="city" class="w3-text-teal"><b>Hostel City</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel city" name="city" required>
-  
-      <label for="address" class="w3-text-teal"><b>Hostel Address</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel Address" name="address" required>
-  
-      <label for="fees" class="w3-text-teal"><b>Hostel Fees</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel fees" name="fees" required>
-  
-      <p class="w3-text-teal">By creating an account you agree to our<a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
-  
+      {% comment %} {{form.as_table}} {% endcomment %}
       <div class="clearfix">
-          <button type="submit" class="w3-button w3-teal w3-round">Add</button>
-        <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+        <button type="submit" class="w3-button w3-border w3-border-orange w3-hover-black w3-round">Add</button>
+        <button type="reset" class="w3-button w3-border w3-border-orange w3-hover-black w3-round">Cancel</button>
       </div>
     </div>
   </form>

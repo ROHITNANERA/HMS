@@ -1,27 +1,52 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
-{% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-<form method = "post" action={% url 'deletefacility' %} style="border:1px solid #ccc">
+<div class="w3-row">
+<form method = "post" class="w3-quarter" action={% url 'viewfacility' %} style="border:1px solid #ccc">
     {% csrf_token %}
-{% for h in facilities %}
-
-<div class="w3-container w3-text-teal w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
-    <table class="w3-table w3-bordered">
-<tr>
-    <td>Hostel</td><td> {{ h.hostel }}</td></tr>
-<tr>
-<td>Name</td><td>{{h.f_name}}</td></tr>   
-<tr>
-<td>Description</td><td>{{h.f_description}}</td></tr>
-
-{% comment %} <input type="hidden" name="facilityidid" value={{h.id}}> {% endcomment %}
-<tr>
-<td><button type="submit" name="action" class="w3-button w3-round w3-red" value={{h.id}}>Delete</button></td></tr>
-</table>
-
+          <div class="w3-container w3-margin-bottom w3-margin-left">
+            <h3 class="w3-text-deep-purple">Select Hostel to view Facilities</h3>
+            <hr>
+            <select name="hostel" class="w3-dropdown-click  w3-padding w3-bar w3-margin-bottom">
+            {% for h in hostels %}
+              <option class = "w3-bar-item w3-button w3-padding w3-hover-black" value={{h.id}}>{{h.h_name}}</option>
+            {% endfor %}
+            </select>
+            <br>           
+            <div class="clearfix">
+                <button type="submit" name="action" value="view" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">View Facilities</button>
+              <button type="reset" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">Cancel</button>
+            </div>
+          </div>
+        </form>
+    
+<div class="w3-rest">
+  
+          <div class="w3-container w3-margin-bottom w3-margin-left">
+            {% for message in messages %}
+              <p id="messages" class="w3-bar w3-center w3-padding w3-deep-purple">{{message}}</p>    
+            {% endfor %}
+            <h3 class="w3-text-deep-purple">Facilities</h3>
+            <hr>
+            <table class='w3-table w3-border w3-round'>
+              <tr class="w3-text-deep-purple">
+              <th>Hostel Name</th><th>Facility Name</th><th>Description</th><th>Action</th>
+            </tr>
+            {% if facilities is not None %}
+              {% for f in facilities %}
+                <tr class="">
+                  <td>{{f.hostel}}</td>
+                  <td>{{f.f_name}}</td>
+                  <td>{{f.f_description}}</td>
+                  <td>
+                    {% comment %} <a href="{% url 'selecthostel' %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Edit &#9998;</a>&nbsp; {% endcomment %}
+                    <form style="display:inline" action="{% url 'deletefacility' %}" method="post">{% csrf_token %}<button type="submit" name="pk" class="w3-button w3-round w3-red" value="{{f.id}}">Delete &#10006;</button></form></td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+            </table>
+            <br>              
+          </div>
 </div>
-
- {% endfor %}
-</form>
+</div>
 
 {% endblock %}

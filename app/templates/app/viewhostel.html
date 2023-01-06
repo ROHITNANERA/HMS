@@ -1,18 +1,18 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
 {% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-<form method = "post" action={% url 'updatehostel' %} style="border:1px solid #ccc">
-    {% csrf_token %}
+{% comment %} <form method = "post" action={% url 'updatehostel' %} style="border:1px solid #ccc">
+    {% csrf_token %} {% endcomment %}
 {% for h in hostels %}
 
-<div class="w3-container w3-text-teal w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
-    <table class="w3-table w3-bordered">
+<div class="w3-container w3-text-black w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
+    <table class="w3-table">
 <tr>
     <td>Name</td><td> {{ h.h_name }}</td></tr>
 <tr>
-<td>Email</td><td>{{h.h_email}}</td></tr>   
+<td>Email </td><td>{{h.h_email}}</td></tr>   
 <tr>
-<td>contact</td><td>{{h.h_contact}}</td></tr>
+<td>contact </td><td>{{h.h_contact}}</td></tr>
 <tr>
 <td>City</td><td>{{h.h_city}}</td></tr>
 <tr>
@@ -20,13 +20,12 @@
 <tr>
 <td>Fees</td><td>{{h.h_fees}}</td></tr>
 <input type="hidden" name="hostelid" value={{h.id}}>
-<tr><td><button type="submit" name="action" class="w3-button w3-round w3-teal" value="update">Update</button></td>
-<td><button type="submit" name="action" class="w3-button w3-round w3-red" value="delete">Delete</button></td></tr>
+<tr><td><a href="{% url 'updatehostel' h.id %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Update &#9998;</a></td>
+<td><form action="{% url 'deletehostel' h.id %}" method="post">{% csrf_token %}<button type="submit" name="hid" class="w3-button w3-round w3-red" value="{{h.id}}">Delete &#10006;</button></form></td></tr>
 </table>
-
 </div>
 
  {% endfor %}
-</form>
+{% comment %} </form> {% endcomment %}
 
 {% endblock %}

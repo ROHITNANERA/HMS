@@ -3,22 +3,22 @@
     <div class="w3-container w3-quarter">
         {% block content %}
         {% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-        <form method = "post" action={% url 'selectforall' %} style="border:1px solid #ccc">
-            {% csrf_token %}
+        <form method = "post" action={% url 'selecthostel' %} style="border:1px solid #ccc">
+            {% csrf_token %}clearfix
             <div class="w3-container w3-quarter  w3-margin-bottom w3-margin-left">
-                <h1 class="w3-text-teal">Select Hostel</h1>
-                <p class="w3-text-teal">Please select hostel to view details</p>
+                <h1 class="">Select Hostel</h1>
+                <p class="">Please select hostel to view details</p>
                 <hr>
-                <label for="Hostel" class="w3-text-teal"><b>Select Hostel</b></label>
-                <select name="hostel" class="w3-dropdown-click w3-text-teal w3-padding w3-bar w3-margin-bottom">
+                <label for="Hostel" class=""><b>Select Hostel</b></label>
+                <select name="hostel" class="w3-dropdown-click  w3-padding w3-bar w3-margin-bottom">
                 {% for h in hostels %}
-                    <option class = "w3-bar-item w3-button" value={{h.id}}>{{h.h_name}}</option>
+                    <option class = "w3-bar-item w3-button w3-border w3-border-orange w3-hover-black" value={{h.id}}>{{h.h_name}}</option>
                 {% endfor %}
                 </select>
                 <br>           
                 <div class="clearfix">
-                    <button type="submit" name="action" value="view" class="w3-button w3-teal w3-round">Select Hostel</button>
-                    <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+                    <button type="submit" name="action" value="view" class="w3-button w3-border w3-border-orange w3-hover-black  w3-round">Select Hostel</button>
+                    <button type="reset" class="w3-button w3-border w3-border-orange w3-hover-black  w3-round">Cancel</button>
                 </div>
             </div>
         </form>
@@ -28,10 +28,10 @@
     <div class = "w3-container w3-third w3-amber">
         {% block dashboard %}
         
-            <a class = "w3-padding-48 w3-round-large w3-margin-top w3-margin w3-button w3-teal" href={% url 'addfacilityform' %}>Add Facility</a>
-            <a class = "w3-padding-48 w3-round-large w3-margin-top w3-margin w3-button w3-teal" href={% url 'viewfacility' %}>View Facilities</a>
-            <a class = "w3-padding-48 w3-round-large w3-margin-top w3-margin w3-button w3-teal" href={% url 'addstudent' %}>Add Student</a>
-            <a class = "w3-padding-48 w3-round-large w3-margin-top w3-margin w3-button w3-teal" href={% url 'viewstudents' %}>View Students</a>
+            <a class = "w3-margin-top w3-margin w3-button w3-border w3-border-orange w3-hover-black w3-border w3-border-orange-orange" href={% url 'addfacilityform' %}>Add Facility</a>
+            <a class = "w3-margin-top w3-margin w3-button w3-border w3-border-orange w3-hover-black w3-border w3-border-orange-orange" href={% url 'viewfacility' %}>View Facilities</a>
+            <a class = "w3-margin-top w3-margin w3-button w3-border w3-border-orange w3-hover-black w3-border w3-border-orange-orange" href={% url 'addstudent' %}>Add Student</a>
+            <a class = "w3-margin-top w3-margin w3-button w3-border w3-border-orange w3-hover-black w3-border w3-border-orange-orange" href={% url 'viewstudents' %}>View Students</a>
 
         
         {% endblock %}

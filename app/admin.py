@@ -2,9 +2,6 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
-class HAdminAdmin(admin.ModelAdmin):
-    list_display = ('id','name','email','Password')
-admin.site.register(HAdmin,HAdminAdmin)
 
 class HostelAdmin(admin.ModelAdmin):
     list_display = ('id','h_name','h_user','h_email','h_contact','h_city','h_address','h_fees','h_registered')

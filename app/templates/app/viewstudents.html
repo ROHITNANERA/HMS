@@ -1,30 +1,56 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
-{% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-<form method = "post" action={% url 'deletestudent' %} style="border:1px solid #ccc">
-    {% csrf_token %}
-{% for s in students %}
+<div class="w3-row">
+    <form method = "post" class="w3-quarter" action={% url 'viewstudents' %} style="border:1px solid #ccc">
+        {% csrf_token %}
+        <div class="w3-container w3-margin-bottom w3-margin-left">
+            <h3 class="w3-text-deep-purple">Select Hostel to view Facilities</h3>
+            <hr>
+            <select name="hostel" class="w3-dropdown-click  w3-padding w3-bar w3-margin-bottom">
+            {% for h in hostels %}
+                <option class = "w3-bar-item w3-button w3-padding w3-hover-black" value={{h.id}}>{{h.h_name}}</option>
+            {% endfor %}
+            </select>
+            <br>           
+            <div class="clearfix">
+                <button type="submit" name="action" value="view" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">View Facilities</button>
+                <button type="reset" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">Cancel</button>
+            </div>
+        </div>
+    </form>
 
-<div class="w3-container w3-text-teal w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
-    <table class="w3-table w3-bordered">
-<tr>
-    <td>Name</td><td> {{ s.name }}</td></tr>
-<tr>
-<td>Email</td><td>{{s.email}}</td></tr>   
-<tr>
-<td>contact</td><td>{{s.contact}}</td></tr>
-<tr>
-<td>Hostel</td><td>{{s.hostel}}</td></tr>
-<tr>
-<td>Room </td><td>{{s.room}}</td></tr>
-<input type="hidden" name="studentid" value={{s.id}}>
-<tr><td><button type="submit" name="action" class="w3-button w3-round w3-teal" value="update">Update</button></td>
-<td><button type="submit" name="action" class="w3-button w3-round w3-red" value="delete">Delete</button></td></tr>
-</table>
 
+<div class="w3-rest">
+          <div class="w3-container w3-margin-bottom w3-margin-left">
+            {% for message in messages %}
+              <p id="messages" class="w3-bar w3-center w3-padding w3-deep-purple">{{message}}</p>    
+            {% endfor %}
+            <h3 class="w3-text-deep-purple w3-center">Students</h3>
+            <hr>
+            <table class='w3-table w3-border w3-round'>
+              <tr class="w3-text-deep-purple">
+              <th>Student Name</th><th>Email id</th><th>Contact</th><th>Hostel Name</th><th>RoomNo</th><th>Action</th>
+            </tr>
+            {% if students is not None %}
+              {% for s in students %}
+                <tr class="">
+                  <td>{{s.name}}</td>
+                  <td>{{s.email}}</td>
+                  <td>{{s.contact}}</td>
+                  <td>{{s.hostel}}</td>
+                  <td>{{s.room}}</td>
+                  <td>
+                    {% comment %} <a href="{% url 'selecthostel' %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Edit &#9998;</a>&nbsp; {% endcomment %}
+                    <a href="{% url 'updatestudent' s.id %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Update &#9998;</a>
+                    <form style="display:inline" action="{% url 'deletestudent' %}" method="post">{% csrf_token %}<button type="submit" name="pk" class="w3-button w3-round w3-red" value="{{s.id}}">Delete &#10006;</button></form></td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+            </table>
+            <br>              
+          </div>
+</div>
 </div>
 
- {% endfor %}
-</form>
 
 {% endblock %}

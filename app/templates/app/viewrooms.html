@@ -1,24 +1,54 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
 {% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-<form method = "post" action={% url 'viewrooms' %} style="border:1px solid #ccc">
+<div class="w3-row">
+<form method = "post" class="w3-quarter" action={% url 'selecthostel' %} style="border:1px solid #ccc">
     {% csrf_token %}
-          <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
-            <h1 class="w3-text-teal">Select Hostel</h1>
-            <p class="w3-text-teal">Please select hostel to view Rooms</p>
+          <div class="w3-container w3-margin-bottom w3-margin-left">
+            <h3 class="w3-text-deep-purple">Select Hostel to view rooms</h3>
             <hr>
-            <label for="Hostel" class="w3-text-teal"><b>Select Hostel</b></label>
-            <select name="hostel" class="w3-dropdown-click w3-text-teal w3-padding w3-bar w3-margin-bottom">
+            <select name="hostel" class="w3-dropdown-click  w3-padding w3-bar w3-margin-bottom">
             {% for h in hostels %}
-              <option class = "w3-bar-item w3-button" value={{h.id}}>{{h.h_name}}</option>
+              <option class = "w3-bar-item w3-button w3-padding w3-hover-black" value={{h.id}}>{{h.h_name}}</option>
             {% endfor %}
             </select>
             <br>           
             <div class="clearfix">
-                <button type="submit" name="action" value="view" class="w3-button w3-teal w3-round">View Rooms</button>
-              <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+                <button type="submit" name="action" value="view" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">View Rooms</button>
+              <button type="reset" class="w3-button w3-border w3-hover-black w3-border-orange w3-round">Cancel</button>
             </div>
           </div>
         </form>
+    
+<div class="w3-rest">
+  
+          <div class="w3-container w3-margin-bottom w3-margin-left">
+            {% for message in messages %}
+              <p id="messages" class="w3-bar w3-center w3-padding w3-deep-purple">{{message}}</p>    
+            {% endfor %}
+            <h3 class="w3-text-deep-purple">Rooms</h3>
+            <hr>
+            <table class='w3-table w3-border w3-round'>
+              <tr class="w3-text-deep-purple">
+              <th>Hostel Name</th><th>Room No</th><th>Room Capacity</th><th>Available Space</th><th>Action</th>
+            </tr>
+            {% if rooms is not None %}
+              {% for r in rooms %}
+                <tr class="">
+                  <td>{{r.hostel}}</td>
+                  <td>{{r.room_no}}</td>
+                  <td>{{r.capacity}}</td>
+                  <td>-</td>
+                  <td>
+                    {% comment %} <a href="{% url 'selecthostel' %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Edit &#9998;</a>&nbsp; {% endcomment %}
+                    <form style="display:inline" action="{% url 'deleteroom' %}" method="post">{% csrf_token %}<button type="submit" name="pk" class="w3-button w3-round w3-red" value="{{r.id}}">Delete &#10006;</button></form></td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+            </table>
+            <br>              
+          </div>
+</div>
+</div>
 
 {% endblock %}

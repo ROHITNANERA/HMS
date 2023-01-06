@@ -17,27 +17,27 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         
-        <div class = "w3-round w3-teal w3-panel w3-card w3-margin-left w3-margin-right w3-border w3-border-orange">
-            <font class="w3-margin-top w3-padding w3-hover-text-black w3-margin-right">WELCOME TO HMS</font>
-            <a href="{% url 'selectforall' %}" class="w3-button">Home</a>
-            <a href="{% url 'addhostel' %}" class="w3-button">Add Hostel</a>
-            <a href="{% url 'viewhostels' %}" class="w3-button">View Hostels</a>
-            <a href="{% url 'addroom' %}" class="w3-button">Add Room</a>
-            <a href="{% url 'selecthostel' %}" class="w3-button">View Rooms</a>
-            <a href="{% url 'logout' %}" class="w3-button w3-right w3-amber">Logout</a>
-            
-            
+        <div class = "w3-round w3-indigo w3-panel w3-card w3-margin-left w3-margin-right w3-border w3-border-orange">
+            <font class="w3-margin-top w3-padding w3-hover-text-orange w3-margin-right">WELCOME TO HMS</font>
+            <a href="{% url 'addhostel' %}" class="w3-btn w3-hover-text-orange">Add Hostel</a>
+            <a href="{% url 'viewhostels' %}" class="w3-btn w3-hover-text-orange">View Hostels</a>
+            <a href="{% url 'addroom' %}" class="w3-btn w3-hover-text-orange">Add Room</a>
+            <a href="{% url 'selecthostel' %}" class="w3-btn w3-hover-text-orange">View Rooms</a>
+            <a href="{% url 'addfacilityform' %}" class="w3-btn w3-hover-text-orange">Add Facilities</a>
+            <a href="{% url 'viewfacility' %}" class="w3-btn w3-hover-text-orange">View Facilities</a>
+            <a href="{% url 'logout' %}" class="w3-button w3-hover-blue-grey w3-right w3-orange">Logout &#10132;</a>
         </div>
 
 
         <div class = "w3-bar w3-container">
             {% block content %}
+            <h2>Hello {{request.user}}</h2>
             {% endblock %}
             {% block dashboard %}
             {% endblock %}
         </div>
         
-        <div class = "w3-panel w3-margin w3-round w3-teal w3-border-top w3-border-orange w3-hover-shadow">
+        <div class = "w3-panel w3-margin w3-round w3-blue-gray w3-border-top w3-border-orange">
             <h6 class = "w3-bar-item">HMS (Hostel Management System)
             </h6>    
         </div>

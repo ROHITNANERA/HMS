@@ -3,20 +3,9 @@ from django.contrib.auth.models import User
 from django.forms import PasswordInput
 
 
-
-
-class HAdmin(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=50)
-    Password = models.CharField(max_length=100)
-    def __str__(self):
-        return self.name
-
-
-
 class Hostel(models.Model):
     h_name = models.CharField(max_length=100,verbose_name="Hostel Name")
-    h_user = models.ForeignKey(HAdmin,verbose_name="Admin",on_delete=models.SET_NULL,null=True)         #hostel admin
+    h_user = models.ForeignKey(User,verbose_name="Admin",on_delete=models.SET_NULL,null=True)         #hostel admin
     h_email = models.EmailField(max_length=100,verbose_name="Hostel Email")
     h_contact = models.CharField(max_length=100,verbose_name="Hostel Contact")
     h_city = models.CharField(max_length=30,verbose_name="City",null=True)
@@ -36,22 +25,16 @@ class Image(models.Model):
     hostel = models.ForeignKey(Hostel,on_delete=models.CASCADE)
     file = models.CharField(max_length=200)
     
-
-#create room model
-# roomid,room number,hostelid
 class Room(models.Model):
     room_no = models.CharField(max_length=30)
     hostel = models.ForeignKey(Hostel,on_delete=models.SET_NULL,null=True)
     capacity = models.CharField(max_length=30,null=True)
+    #add field available space
 
     def __str__(self):
         # return str(self.hostel)+str(self.room_no)
         return str(self.room_no)
 
-
-
-#create student model
-# name,email,contact,address,hostelid,roomid
 class Student(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)

@@ -1,7 +1,7 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
 
-<form method = "post" action={% url 'updatestudent' %} style="border:1px solid #ccc">
+<form method = "post" action={% url 'updatestudent' s.id %} style="border:1px solid #ccc">
   {% csrf_token %}
     <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
       <h1 class="w3-text-teal">UPDATE STUDENT</h1>

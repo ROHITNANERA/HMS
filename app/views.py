@@ -5,178 +5,175 @@ from .models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.urls import reverse
-from django.db.models import Q
-
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 def index(request):
-    # return HttpResponse("<h1>Hello, world. You're at the  index.</h1>")
     return render (request,"app/login.html")
 
 def home(request):
    return render(request, 'app/home.html', {})
 
-# def is_login(request):
-#     try:
-#         return True if (request.session['login']) else False
-#     except KeyError:
-#         return False
-
 def register(request):
-    if request.POST:
-        print(request.POST)
-        if request.POST['psw'] == request.POST['psw-repeat']:
-            print("PAssword is same.")
-
-            hadmin = HAdmin.objects.create()
-            hadmin.name = request.POST['name']
-            hadmin.email = request.POST['email']
-            hadmin.Password = request.POST['psw']
-            hadmin.save()
-            # return render(request,'app/login.html',{})        #it gives multiple dictionary key errors because password key is used in both login and register and render method does not reset post request.
-            return redirect(reverse('login'))
-    return render(request, 'app/register.html', {})
-
-def login(request):
-    # context = {'form': LoginForm}
-    # if request.POST:
-    #     print(request.POST)
-    #return context in place of '{}' if umcomment this
-    try:
-        if request.session['login']:
-            print("login try-if block")
-            return render(request,'app/selecthostel.html',{})
-    except KeyError:
-
-        if request.POST:
-            print("Login except-if block")
-            print(request.POST)
-            try:
-                hadmin = HAdmin.objects.get(email = request.POST['email'])
-                print("login except-try block")
-                if hadmin.Password == request.POST['psw']:
-                    print("login except try if block")
-                    request.session['login']=hadmin.id
-                    request.session['islogin'] = True
-                    print(request.session['login'])
-                    # return render(request,'app/dashboard.html',{})
-                    return redirect(reverse("selectforall"))
-            
-            except ObjectDoesNotExist:
-                print("Object does not excist")
-        return render(request, 'app/login.html',{})
-        # return redirect(reverse('login'))
-
-#for logout option
-def logout(request):
+    # form = UserCreationForm()
+    form = CreateUserForm()
+    form.fields['username'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Username'}
+    form.fields['email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+    form.fields['first_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'First Name'}
+    form.fields['last_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Last Name'}
+    form.fields['password1'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Password'}
+    form.fields['password2'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Confirm Password'}
+    if request.method=='POST':
+        form = CreateUserForm(request.POST)
+        form.fields['username'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Username'}
+        form.fields['email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+        form.fields['first_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'First Name'}
+        form.fields['last_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Last Name'}
+        form.fields['password1'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Password'}
+        form.fields['password2'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Confirm Password'}
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            # to send the success messages to the login page
+            messages.success(request,f'You can now login with username \'{user}\'')
+            return redirect('login')
+    context = {'form':form}
+    return render(request,'app/register.html',context)
     
-    request.session.flush()
-        # return render(request,'app/login.html',{})
-    return redirect(reverse('login'))
 
+def login_user(request):
+    if request.method=='POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request,username= username, password = password)
+        if user is not None:
+            login(request,user)
+            return redirect('dashboard')
+        else:
+            messages.info(request,"Incorrect username or password!")
+    context={}
+    return render (request,'app/login.html',context)
 
+@login_required(login_url='login')
+def logout_user(request):
+    logout(request)
+    return redirect('login')
+
+@login_required(login_url='login')
 def dashboard(request):
-    
-    try:
-        return render(request, 'app/dashboard.html', {}) if request.session['login'] else render(request, 'app/login.html', {})
-    except KeyError:
-        return redirect(reverse('login'))
+    return render(request, 'app/dashboard.html', {})
+
 
 
 
 def addhostel(request):
-        if not request.session['islogin']:
-            return redirect(reverse('login'))
-    # if is_login(request):
-        if request.POST:
-            print(request.POST)
+    form = HostelForm()
+    form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
+    form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+    form.fields['h_contact'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Contact Number'}
+    form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
+    form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
+    form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
+    if request.POST:  
+        form = HostelForm(request.POST)
+        form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
+        form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+        form.fields['h_contact'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Contact Number'}
+        form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
+        form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
+        form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
+        if form.is_valid():
             hostel = Hostel.objects.create()
-            hostel.h_name= request.POST['name']
-            hostel.h_user = HAdmin.objects.get(id = request.session['login'])
-            hostel.h_email = request.POST['email']
-            hostel.h_contact = request.POST['contact']
-            hostel.h_city = request.POST['city']
-            hostel.h_address = request.POST['address']
-            hostel.h_fees = request.POST['fees']
+            hostel.h_name = form.cleaned_data['h_name']
+            hostel.h_email = form.cleaned_data['h_email']
+            hostel.h_contact = form.cleaned_data['h_contact']
+            hostel.h_address = form.cleaned_data['h_address']
+            hostel.h_city = form.cleaned_data['h_city']
+            hostel.h_fees = form.cleaned_data['h_fees']
+            hostel.h_user = request.user
             hostel.save()
-            return render(request,'app/addhostel.html',{})
-        # return redirect(reverse('addhostel'))
-        return render(request,'app/addhostel.html',{})
+            messages.info(request,"Hostel data is saved!")
+        return render(request,'app/addhostel.html',{'form':form})
+    return render(request,'app/addhostel.html',{'form':form})
 
-
-def updatehostel(request):
-    
-    try:
-        if not request.session['login']:
-            return redirect(reverse('login'))
-        if request.POST['hostelid']:
-            # print(request.POST)
-            hostel = Hostel.objects.get(id= request.POST['hostelid'])
-            # print(hostel)
-            if request.POST['action']=='delete':
-                hostel.delete()
-                # return render(request,'app/viewhostel.html',{})
-                return redirect(reverse('viewhostels'))
-            request.session['hostelid']=request.POST['hostelid']
-            print("*********************************************")
-            print(hostel.h_name)
-            print(hostel.h_email)
-            return render(request,'app/updatehostel.html',{'hostel':hostel})
-    except KeyError:
+@login_required(login_url='login')
+def deletehostel(request,pk):
+    if request.method=="POST":
+        hostel = Hostel.objects.get(id=pk)
+        hostel.delete()
         return redirect(reverse('viewhostels'))
 
 
-def updatehosteldata(request):
-    
-    try:
-        if request.session['login']:
-            # print(request.POST)
-                # form = HostelForm
-                hostel = Hostel.objects.get(id=request.session['hostelid'])
-                hostel.h_name= request.POST['name']
-                # hostel.h_user = HAdmin.objects.get(id = request.session['login'])
-                hostel.h_email = request.POST['email']
-                hostel.h_contact = request.POST['contact']
-                hostel.h_city = request.POST['city']
-                hostel.h_address = request.POST['address']
-                hostel.h_fees = request.POST['fees']
-                hostel.save()
-                # return render(request,'app/viewhostel.html',{})
-                return redirect(reverse('viewhostels'))
-    except KeyError:    
-        return redirect(reverse('login'))
+@login_required(login_url='login')
+def updatehostel(request,pk):
+    hostel = Hostel.objects.get(id= pk)
+    print("this is hostel data: ",hostel.id)
+    form = HostelForm(instance=hostel)
+    form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
+    form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+    form.fields['h_contact'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Contact Number'}
+    form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
+    form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
+    form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
+    if request.method=='POST':
+        form = HostelForm(request.POST,instance=hostel)
+        form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
+        form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+        form.fields['h_contact'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Contact Number'}
+        form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
+        form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
+        form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
+        if form.is_valid():
+            hostel.h_name = form.cleaned_data['h_name']
+            hostel.h_email = form.cleaned_data['h_email']
+            hostel.h_contact = form.cleaned_data['h_contact']
+            hostel.h_address = form.cleaned_data['h_address']
+            hostel.h_city = form.cleaned_data['h_city']
+            hostel.h_fees = form.cleaned_data['h_fees']
+            hostel.save()
+            messages.info(request,"Hostel data is saved!")
+            return render(request,'app/updatehostel.html',{'form':form})
+    return render(request,'app/updatehostel.html',{'form':form})
 
-# def select(request):
-#     if request.POST['save']:
-#         updatehosteldata(request)
-#     elif request.POST['hostelid']:
-#         updatehostel(request)
 
+def updatehosteldata(request,pk):
+    hostel = Hostel.objects.get(id=pk)
+    form = HostelForm(hostel)
+    if request.method=='POST':
+        form = HostelForm(request.POST)
+        form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
+        form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
+        form.fields['h_contact'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Contact Number'}
+        form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
+        form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
+        form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
+        if form.is_valid():
+            hostel.h_name = form.cleaned_data['h_name']
+            hostel.h_email = form.cleaned_data['h_email']
+            hostel.h_contact = form.cleaned_data['h_contact']
+            hostel.h_address = form.cleaned_data['h_address']
+            hostel.h_city = form.cleaned_data['h_city']
+            hostel.h_fees = form.cleaned_data['h_fees']
+            hostel.save()
+            messages.info(request,"Hostel data is updated!")
+            return render(f'app/viewhostels/{hostel.id}/')
+    return render(f'app/viewhostels/{hostel.id}/')
 
-
+@login_required(login_url='login')
 def viewhostel(request):
-    
-    try:
-        hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
-        print(hostelsobj)
-        context={}  
-        try:
-            return render(request,'app/viewhostel.html',{ 'hostels':hostelsobj })
-        except Exception as e:
-            print(e)
-            return redirect('addhostel')
-    except KeyError:
-        return redirect(reverse('login'))
+    hostelsobj = Hostel.objects.filter(h_user = request.user)
+    print(hostelsobj)
+    context={'hostels':hostelsobj}  
+    return render(request,'app/viewhostel.html',context)
+  
 
+@login_required(login_url='login')
 def addroom(request):
-    
-    try:
-        hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
-        print(hostelsobj)
-        return render(request,'app/addroom.html',{ 'hostels':hostelsobj })
-    except Exception as e:
-            print(e)
-            return redirect(reverse('login'))
+    hostelsobj = Hostel.objects.filter(h_user = request.user)
+    return render(request,'app/addroom.html',{ 'hostels':hostelsobj })
 
+@login_required(login_url='login')
 def saveroom(request):
     
     room = Room.objects.create()
@@ -184,206 +181,141 @@ def saveroom(request):
     room.hostel = Hostel.objects.get(id=request.POST['hostel'])
     room.capacity = request.POST['capacity']
     room.save()
-    rooms = Hostel.objects.filter(id=request.POST['hostel'])
+    messages.info(request,"Room data added successfully!")
     return redirect(reverse('addroom'))
-    # return render(request,'app/viewrooms.html',{'rooms':rooms})
 
+
+@login_required(login_url='login')
 def selecthostel(request):
-    
-    try:
-        hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
-        # print(hostelsobj)
-        print("At views selecthostel function")
-        return render(request,'app/viewrooms.html',{ 'hostels':hostelsobj })
-    except Exception as e:
-            print(e)
-            return redirect(reverse('selecthostel'))
-    #  return render(request,'app/viewrooms.html',{})
-    # rooms += Room.objects.filter(Q(hostel=5)|Q(hostel=6))
-
-def viewrooms(request):
-    
-    try:
-        print("views viewrooms function")
-        hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
-        request.session['selectedhostel'] = request.POST['hostel']
+    hostelsobj = Hostel.objects.filter(h_user =request.user)
+    context={"hostels":hostelsobj,"rooms":None}
+    if request.method=='POST':
+        rooms = Room.objects.filter(hostel = request.POST.get('hostel',None))
         
-        # print(request.session['selectedhostel'])
-        if request.POST['hostel']:
-            rooms = Room.objects.filter(hostel = request.POST['hostel'])
-            print(rooms)
+        context={"hostels":hostelsobj,'rooms':rooms}
+        if len(rooms)== 0:
+            messages.info(request," NO rooms found for selected hostel!")
         else:
-            rooms = Room.objects.filter(hostel=Hostel.objects.get(h_user=request.session['login']))
-        # if request.POST['action']=="Delete":
-        #     room = Room.objects.get(id=request.POST['roomid'])
-        #     print('room is going to delete')
-        #     room.delete()
-        #     print('room deleted')
-        return render(request,'app/deleteroom.html',{ 'rooms':rooms,'hostels':hostelsobj })
-    except Exception as e:
-        print("viewrooms functions exception")
-        print(e)
-        rooms = Room.objects.filter(hostel = request.POST['hostel'])
-        return redirect(reverse('addhostel'))
+            messages.info(request,f"Selected Hostel is \'{rooms.first().hostel}\'")
+        return render(request,'app/viewrooms.html',context=context)
+    return render(request,'app/viewrooms.html',context=context)
 
 
+@login_required(login_url='login')
 def deleteroom(request):
-    
-    try:    
-        print("deleterroom function")
-        if request.POST['roomid']:
-            print('post found')
-            room = Room.objects.get(id=request.POST['roomid'])
-            print('record found')
-            room.delete()
-            print('deleted')
-            print(request.session['selectedhostel'])
-            # if request.session['selectedhosted']:
-            print("deleteroom if condition")
-            rooms = Room.objects.filter(hostel = request.session['selectedhostel'])
-            print(rooms)
-            # return redirect(reverse('viewrooms'))
-            # return render(request,'app/viewrooms.html',{})
-            return render(request,'app/deleteroom.html',{'rooms':rooms})
-        else:
-            print("deleteroom functions else condition")
-            if request.POST['hostel']:
-                rooms = Room.objects.filter(hostel = request.POST['hostel'])
-                print(rooms)
-            else:
-                rooms = Room.objects.filter(hostel=Hostel.objects.get(h_user=request.session['login']))
-            return render(request,'app/deleteroom.html',{ 'rooms':rooms})
-    except KeyError:
+    if request.method=='POST':
+        room = Room.objects.get(id=request.POST.get('pk',None))
+        room.delete()
+        messages.info(request,"Room deleted successfully!")
         return redirect(reverse('selecthostel'))
-
-def selectforall(request):
-    
-    try:
-        if not request.session['login']:
-            print("selectfor all if me gaya")
-            return redirect(reverse('login'))
-        print("selectfor all i se bahar hu")
-        hostelsobj = Hostel.objects.filter(h_user = request.session['login'])
-        request.session['selectedhostel'] = request.POST['hostel']
-        print("Hostel selected...")
-        # print(hostelsobj)
-        print("At views select function")
-        return render(request,'app/selecthostel.html',{ 'hostels':hostelsobj })
-    except Exception as e:
-            print(e)    
-            # return redirect(reverse('selectforall'))
-            return render(request,'app/selecthostel.html',{ 'hostels':hostelsobj })
-            # return redirect(reverse('login'))
+    messages.info(request,"Something went wrong!")
+    return redirect(reverse('selecthostel'))
 
 
+@login_required(login_url='login')    
 def addfacility_form(request):
-    
-    hostel = Hostel.objects.get(id=request.session['selectedhostel'])
-    return render(request,'app/addfacility.html',{'hostel':hostel})
-
-
-def addfacility(request):
-    
-    try:
-        print("add facility function....")
+    hostels = Hostel.objects.filter(h_user=request.user)
+    context={'hostels':hostels,'facilities':None}
+    if request.method=='POST':
+        facilities = Facility.objects.filter(hostel=request.POST.get('hostel',None))
         facility = Facility.objects.create(hostel=Hostel.objects.get(id=request.POST['hostel']))
         facility.hostel= Hostel.objects.get(id=request.POST['hostel'])
         facility.f_name=request.POST['fname']
         facility.f_description=request.POST['fdesc']
         facility.save()
-        print("Object saved to Model")
-        return redirect(reverse('addfacilityform'))
-    except KeyError:
-        return redirect(reverse('selectforall'))
+        print('this is hostel data from the post method :',request.POST.get('hostel'))
+        context = {'hostels':hostels,'facilities':facilities}
+    return render(request,'app/addfacility.html',context=context)
+
+@login_required(login_url='login')
+def addfacility(request):
+    facility = Facility.objects.create(hostel=Hostel.objects.get(id=request.POST['hostel']))
+    facility.hostel= Hostel.objects.get(id=request.POST['hostel'])
+    facility.f_name=request.POST['fname']
+    facility.f_description=request.POST['fdesc']
+    facility.save()
+    return redirect(reverse('addfacilityform'))
 
 
 
-
+@login_required(login_url='login')
 def viewfacilities(request):
-    
-    try:
-        facilities = Facility.objects.filter(hostel = request.session['selectedhostel'])
-        print(facilities)
-        try:
-            return render(request,'app/viewfacilities.html',{ 'facilities':facilities })
-        except Exception as e:
-            print(e)
-            return redirect('selectforall')
-    except KeyError:
-        return redirect(reverse('login'))
+    hostelsobj = Hostel.objects.filter(h_user =request.user)
+    context={"hostels":hostelsobj,"facilities":None}
+    if request.method=='POST':
+        facilities = Facility.objects.filter(hostel = request.POST.get('hostel',None))
+        
+        context={"hostels":hostelsobj,'facilities':facilities}
+        if len(facilities)== 0:
+            messages.info(request," NO rooms found for selected hostel!")
+        else:
+            messages.info(request,f"Selected Hostel is \'{facilities.first().hostel}\'")
+        return render(request,'app/viewfacilities.html',context=context)
+    return render(request,'app/viewfacilities.html',context=context)
 
+
+@login_required(login_url='login')
 def deletefacility(request):
     
     print("Deletefacility function called")
-    facility = Facility.objects.get(id=request.POST['action'])
+    facility = Facility.objects.get(id=request.POST['pk'])
     facility.delete()
-    print("Facility deleted....")
     return redirect(reverse('viewfacility'))
-#write code to delete the facility
 
+
+@login_required(login_url='login')
 def viewstudents(request):
+    hostels = Hostel.objects.filter(h_user = request.user)
+    context={'hostels':hostels,'students':None}
+    if request.method=='POST':
+        students = Student.objects.filter(hostel = request.POST['hostel'])
+        context = {'hostels':hostels,'students':students}
+        return render(request,'app/viewstudents.html',context=context)
+    return render(request,'app/viewstudents.html',context=context)
     
-    students = Student.objects.filter(hostel = request.session['selectedhostel'])
-    print("viewstudents function....")
-    print(students)
-    return render(request,'app/viewstudents.html',{'students':students})
 
 
+
+@login_required(login_url='login')
 def addstudent(request):
-    try:
-        if not request.session['login']:
-            return redirect(reverse('login'))
-        rooms = Room.objects.filter(hostel=request.session['selectedhostel'])       
-        return render(request,'app/addstudent.html',{'rooms':rooms})
-    except KeyError:
-        return redirect(reverse('login'))
-        # return redirect(reverse('addhostel'))
-    
+    hostels = Hostel.objects.filter(h_user = request.user)
+    rooms = Room.objects.filter(hostel=request.POST.get(('hostel')))
+    return render(request,'app/addstudent.html',{'rooms':rooms,'hostels':hostels})
 
+@login_required(login_url='login')
 def savestudent(request):
-        if not request.session['islogin']:
-            return redirect(reverse('login'))
-        if not request.session['login']:
-            return redirect(reverse('login'))
         if request.POST:
             print(request.POST)
-            student = Student.objects.create() 
-            student.name= request.POST['name']
+            hostel=Hostel.objects.get(id=request.POST.get('hostel'))
+            student = Student.objects.create()
+            name = request.POST.get('name',None)
+            email = request.POST.get("email",None)
+            contact = request.POST.get("contact",None)
+            room = request.POST.get("room",None)
+            if name is None or name =="":
+                messages.error(request,"Name can not be empty!")
+                return render(request,'app/addstudent.html')
+            #add validations here
+            student.name= name
             student.email=request.POST['email']
             student.contact=request.POST['contact']
-            student.hostel=Hostel.objects.get(id=request.session['selectedhostel'])
-            student.room=Room.objects.get(id=request.POST['room'])
+            student.hostel = hostel
+            student.room=Room.objects.get(hostel=hostel,id=room)
             student.save()
             return render(request,'app/addstudent.html',{})
-        # return redirect(reverse('addhostel'))
         return render(request,'app/addstudent.html',{})
 
+@login_required(login_url='login')
 def deletestudent(request):
-    
-    try:
-        if not request.session['login']:
-            return redirect(reverse('login'))
-        if request.POST['studentid']:
-            # print(request.POST)
-            student = Student.objects.get(id= request.POST['studentid'])
-            # print(hostel)
-            if request.POST['action']=='delete':
-                student.delete()
-                # return render(request,'app/viewhostel.html',{})
-                return redirect(reverse('viewstudents'))
-            request.session['studentid']=request.POST['studentid']
-            rooms = Room.objects.filter(hostel=request.session['selectedhostel'])
-            print("*********************************************")
-            print(student.name)
-            print(student.email)
-            return render(request,'app/updatestudent.html',{'student':student,'rooms':rooms})
-    except KeyError:
+    if request.POST['pk']:
+        student = Student.objects.get(id= request.POST['pk'])
+        student.delete()
         return redirect(reverse('viewstudents'))
+    return redirect(reverse('viewstudents'))
+            
 
-def updatestudent(request):
-    
-    if not request.session['login']:
-            return redirect(reverse('login'))
+@login_required(login_url='login')
+def updatestudent(request,pk):    
     if request.POST:
         print(request.POST)
         student = Student.objects.get(id=request.POST['studentid']) 
@@ -393,6 +325,4 @@ def updatestudent(request):
         student.hostel=Hostel.objects.get(id=request.session['selectedhostel'])
         student.room=Room.objects.get(id=request.POST['room'])
         student.save()
-        # return render(request,'app/addstudent.html',{})
         return redirect(reverse('viewstudents'))
-        # return render(request,'app/addstudent.html',{})

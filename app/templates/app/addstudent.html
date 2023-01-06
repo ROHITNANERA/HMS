@@ -4,29 +4,25 @@
 <form method = "post" action={% url 'savestudent' %} style="border:1px solid #ccc">
   {% csrf_token %}
     <div class="w3-container w3-quarter w3-margin-bottom w3-margin-left">
-      <h1 class="w3-text-teal">ADD STUDENT</h1>
-      <p class="w3-text-teal">Please provide student details</p>
+      <h3 class="w3-text-deep-purple w3-center">ADD STUDENT</h3>
       <hr>
-      <label for="email" class="w3-text-teal"><b>Name</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel Name" name="name" required>
+      <input type="text" class="w3-input w3-border w3-round w3-margin-bottom" placeholder="Enter Hostel Name" name="name" required>
 
-      <label for="email" class="w3-text-teal"><b>Email</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel Email" name="email" required>
+      <input type="text" class="w3-input w3-border w3-round w3-margin-bottom" placeholder="Enter Hostel Email" name="email" required>
       
-      <label for="contact" class="w3-text-teal"><b>Contact</b></label>
-      <input type="text" class="w3-input w3-margin-bottom" placeholder="Enter Hostel contact" name="contact" required>
+      <input type="text" class="w3-input w3-border w3-round w3-margin-bottom" placeholder="Enter Hostel contact" name="contact" required>
 
-      <label for="room" class="w3-text-teal"><b>Room</b></label>
-        <select name="room" class="w3-padding w3-input">
-            {% for r in rooms %}
-            <option value={{r.id}}>{{r.room_no}}</option>
+      <label for="hostel" class="w3-text-black">Select Hostel</label>
+        <select name="hostel" class="w3-padding w3-input w3-border w3-round w3-margin-bottom">
+            {% for h in hostels %}
+            <option value={{h.id}}>{{h.h_name}}</option>
             {% endfor %}
-        </select>  
-      <p class="w3-text-teal"> You are adding student to hostel that you selected from home page.<a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+        </select>
+      <input type="number" class="w3-input w3-border w3-round w3-margin-bottom" placeholder="Room Number" name="room" required>  
   
       <div class="clearfix">
-          <button type="submit" class="w3-button w3-teal w3-round">Add</button>
-        <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+          <button type="submit" class="w3-button w3-hover-black w3-border w3-border-orange w3-round">Submit</button>
+        <button type="reset" class="w3-button w3-orange w3-round">Cancel</button>
       </div>
     </div>
   </form>

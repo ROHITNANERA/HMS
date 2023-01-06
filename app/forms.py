@@ -1,21 +1,17 @@
 from string import digits
 from django import forms
 from .models import *
-
-
-#create froms here
-class HAdminForm(forms.ModelForm):
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+class CreateUserForm(UserCreationForm):
     class Meta:
-        model = HAdmin
-        fields = '__all__'
+        model=User
+        fields = ['username','first_name','last_name','email','password1','password2']
 
 
-
-class LoginForm(forms.Form):
-    email = forms.EmailField(max_length=40)
-    psw = forms.CharField(widget=forms.PasswordInput())
 
 class HostelForm(forms.ModelForm):
     class Meta:
         model=Hostel
         fields = '__all__'
+        exclude = ['h_user']

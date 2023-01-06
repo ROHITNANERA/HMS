@@ -2,23 +2,25 @@
     <div class="w3-container w3-quarter">
         {% block content %}
         {% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-        <form method = "post" action={% url 'savefacility' %} style="border:1px solid #ccc">
+        <form method = "post" action={% url 'addfacilityform' %} style="border:1px solid #ccc">
             {% csrf_token %}
             <div class="w3-container w3-quarter  w3-margin-bottom w3-margin-left">
-                <h1 class="w3-text-teal">Add Facility</h1>
-                <h3 class="w3-text-teal">Adding Facility to {{hostel.h_name}}</h3>
+                <h3 class="w3-text-deep-purple">Add Facility</h3>
                 <hr>
-                <input type="hidden" name="hostel" value={{hostel.id}}>
-                <label for="fname" class="w3-text-teal"><b>Facility Name</b></label>
-                <input type="text" name="fname"class ="w3-input">
-
-                <label for="fdesc" class="w3-text-teal"><b>Facility Description</b></label>
+                {% comment %} <input type="hidden" name="hostel" value={{hostel.id}}> {% endcomment %}
+                <label for="hostel" class="w3-text-deep-purple"><b>Select hostel</b></label>
+                <select name="hostel" class="w3-dropdown-click  w3-padding w3-bar w3-margin-bottom">
+                    {% for h in hostels %}
+                      <option class = "w3-bar-item w3-button w3-padding w3-hover-black" value={{h.id}}>{{h.h_name}}</option>
+                    {% endfor %}
+                    </select>
+                <input type="text" name="fname"class ="w3-input w3-margin-bottom w3-border w3-round" placeholder="Facility Name">
             
-                <textarea name="fdesc" class="w3-input"></textarea>
+                <textarea name="fdesc" class="w3-input w3-border w3-round" placeholder="Description about your facility"></textarea>
                 <br>           
                 <div class="clearfix">
-                    <button type="submit" name="action" value="view" class="w3-button w3-teal w3-round">Add Facility</button>
-                    <button type="reset" class="w3-button w3-teal w3-round">Cancel</button>
+                    <button type="submit" name="action" value="view" class="w3-button w3-border w3-border-orange w3-hover-black w3-round">Add Facility</button>
+                    <button type="reset" class="w3-button w3-border w3-border-orange w3-hover-black w3-round">Cancel</button>
                 </div>
             </div>
         </form>
