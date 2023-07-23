@@ -40,7 +40,7 @@ def register(request):
             return redirect('login')
     context = {'form':form}
     return render(request,'app/register.html',context)
-    
+
 
 def login_user(request):
     if request.method=='POST':
@@ -65,8 +65,7 @@ def dashboard(request):
     return render(request, 'app/dashboard.html', {})
 
 
-
-
+@login_required(login_url='login')
 def addhostel(request):
     form = HostelForm()
     form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
@@ -75,7 +74,7 @@ def addhostel(request):
     form.fields['h_address'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Address'}
     form.fields['h_city'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'City'}
     form.fields['h_fees'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Fees'}
-    if request.POST:  
+    if request.POST:
         form = HostelForm(request.POST)
         form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
         form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
@@ -108,7 +107,6 @@ def deletehostel(request,pk):
 @login_required(login_url='login')
 def updatehostel(request,pk):
     hostel = Hostel.objects.get(id= pk)
-    print("this is hostel data: ",hostel.id)
     form = HostelForm(instance=hostel)
     form.fields['h_name'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Hostel Name'}
     form.fields['h_email'].widget.attrs = {'class':'w3-input w3-border w3-round', 'placeholder':'Email Id'}
@@ -137,6 +135,7 @@ def updatehostel(request,pk):
     return render(request,'app/updatehostel.html',{'form':form})
 
 
+@login_required(login_url='login')
 def updatehosteldata(request,pk):
     hostel = Hostel.objects.get(id=pk)
     form = HostelForm(hostel)
@@ -163,10 +162,9 @@ def updatehosteldata(request,pk):
 @login_required(login_url='login')
 def viewhostel(request):
     hostelsobj = Hostel.objects.filter(h_user = request.user)
-    print(hostelsobj)
-    context={'hostels':hostelsobj}  
+    context={'hostels':hostelsobj}
     return render(request,'app/viewhostel.html',context)
-  
+
 
 @login_required(login_url='login')
 def addroom(request):
@@ -175,7 +173,6 @@ def addroom(request):
 
 @login_required(login_url='login')
 def saveroom(request):
-    
     room = Room.objects.create()
     room.room_no = request.POST['roomno']
     room.hostel = Hostel.objects.get(id=request.POST['hostel'])
@@ -187,11 +184,10 @@ def saveroom(request):
 
 @login_required(login_url='login')
 def selecthostel(request):
-    hostelsobj = Hostel.objects.filter(h_user =request.user)
+    hostelsobj = Hostel.objects.filter(h_user=request.user)
     context={"hostels":hostelsobj,"rooms":None}
     if request.method=='POST':
         rooms = Room.objects.filter(hostel = request.POST.get('hostel',None))
-        
         context={"hostels":hostelsobj,'rooms':rooms}
         if len(rooms)== 0:
             messages.info(request," NO rooms found for selected hostel!")
@@ -212,7 +208,7 @@ def deleteroom(request):
     return redirect(reverse('selecthostel'))
 
 
-@login_required(login_url='login')    
+@login_required(login_url='login')
 def addfacility_form(request):
     hostels = Hostel.objects.filter(h_user=request.user)
     context={'hostels':hostels,'facilities':None}
@@ -223,9 +219,9 @@ def addfacility_form(request):
         facility.f_name=request.POST['fname']
         facility.f_description=request.POST['fdesc']
         facility.save()
-        print('this is hostel data from the post method :',request.POST.get('hostel'))
         context = {'hostels':hostels,'facilities':facilities}
     return render(request,'app/addfacility.html',context=context)
+
 
 @login_required(login_url='login')
 def addfacility(request):
@@ -237,14 +233,12 @@ def addfacility(request):
     return redirect(reverse('addfacilityform'))
 
 
-
 @login_required(login_url='login')
 def viewfacilities(request):
-    hostelsobj = Hostel.objects.filter(h_user =request.user)
+    hostelsobj = Hostel.objects.filter(h_user=request.user)
     context={"hostels":hostelsobj,"facilities":None}
     if request.method=='POST':
         facilities = Facility.objects.filter(hostel = request.POST.get('hostel',None))
-        
         context={"hostels":hostelsobj,'facilities':facilities}
         if len(facilities)== 0:
             messages.info(request," NO rooms found for selected hostel!")
@@ -256,8 +250,7 @@ def viewfacilities(request):
 
 @login_required(login_url='login')
 def deletefacility(request):
-    
-    print("Deletefacility function called")
+
     facility = Facility.objects.get(id=request.POST['pk'])
     facility.delete()
     return redirect(reverse('viewfacility'))
@@ -272,8 +265,6 @@ def viewstudents(request):
         context = {'hostels':hostels,'students':students}
         return render(request,'app/viewstudents.html',context=context)
     return render(request,'app/viewstudents.html',context=context)
-    
-
 
 
 @login_required(login_url='login')
@@ -285,7 +276,6 @@ def addstudent(request):
 @login_required(login_url='login')
 def savestudent(request):
         if request.POST:
-            print(request.POST)
             hostel=Hostel.objects.get(id=request.POST.get('hostel'))
             student = Student.objects.create()
             name = request.POST.get('name',None)
@@ -312,13 +302,12 @@ def deletestudent(request):
         student.delete()
         return redirect(reverse('viewstudents'))
     return redirect(reverse('viewstudents'))
-            
+
 
 @login_required(login_url='login')
-def updatestudent(request,pk):    
+def updatestudent(request,pk):
     if request.POST:
-        print(request.POST)
-        student = Student.objects.get(id=request.POST['studentid']) 
+        student = Student.objects.get(id=request.POST['studentid'])
         student.name= request.POST['name']
         student.email=request.POST['email']
         student.contact=request.POST['contact']

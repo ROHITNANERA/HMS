@@ -1,31 +1,33 @@
 {% extends 'app/dashboard.html' %}
 {% block content %}
-{% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
-{% comment %} <form method = "post" action={% url 'updatehostel' %} style="border:1px solid #ccc">
+    {% comment %} <h2>{{ hostels }}</h2> {% endcomment %}
+    {% comment %} <form method = "post" action={% url 'updatehostel' %} style="border:1px solid #ccc">
     {% csrf_token %} {% endcomment %}
-{% for h in hostels %}
-
-<div class="w3-container w3-text-black w3-round-large w3-border w3-margin w3-border-amber w3-quarter">
-    <table class="w3-table">
-<tr>
-    <td>Name</td><td> {{ h.h_name }}</td></tr>
-<tr>
-<td>Email </td><td>{{h.h_email}}</td></tr>   
-<tr>
-<td>contact </td><td>{{h.h_contact}}</td></tr>
-<tr>
-<td>City</td><td>{{h.h_city}}</td></tr>
-<tr>
-<td>Address &nbsp;&nbsp;</td><td>{{h.h_address}}</td></tr>
-<tr>
-<td>Fees</td><td>{{h.h_fees}}</td></tr>
-<input type="hidden" name="hostelid" value={{h.id}}>
-<tr><td><a href="{% url 'updatehostel' h.id %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">Update &#9998;</a></td>
-<td><form action="{% url 'deletehostel' h.id %}" method="post">{% csrf_token %}<button type="submit" name="hid" class="w3-button w3-round w3-red" value="{{h.id}}">Delete &#10006;</button></form></td></tr>
-</table>
-</div>
-
- {% endfor %}
-{% comment %} </form> {% endcomment %}
-
+        <table class="w3-table-all">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>City</th>
+                <th>Address</th>
+                <th>Fees</th>
+                <th>Action</th>
+            </tr>
+            {% for h in hostels %}
+                        <tr>
+                            <td> {{ h.h_name }}</td>
+                            <td>{{h.h_email}}</td>
+                            <td>{{h.h_contact}}</td>
+                            <td>{{h.h_city}}</td>
+                            <td>{{h.h_address}}</td>
+                            <td>{{h.h_fees}}</td>
+                            <td>
+                                <input type="hidden" name="hostelid" value={{h.id}}>
+                                <a href="{% url 'updatehostel' h.id %}" class="w3-button w3-border w3-border-orange w3-round w3-blue">&#9998;</a>&nbsp;
+                                <form action="{% url 'deletehostel' h.id %}" method="post">{% csrf_token %}<button type="submit" name="hid" class="w3-button w3-round w3-red" value="{{h.id}}">&#10006;</button></form>
+                            </td>
+                        </tr>
+            {% endfor %}
+        </table>
+            {% comment %} </form> {% endcomment %}
 {% endblock %}
